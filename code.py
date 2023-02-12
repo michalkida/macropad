@@ -17,7 +17,6 @@ class Page:
         if self.custom:
             macropad.display.refresh()
             self.custom(macropad, position)
-            macropad.display.refresh()
             macropad.display.show(oled_group)
 
         else:
