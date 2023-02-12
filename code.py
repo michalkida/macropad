@@ -52,7 +52,7 @@ if not pages:
     while True:
         pass
 
-last_position = None
+last_position = 0
 last_encoder_switch = macropad.encoder_switch_debounced.pressed
 page_index = 0
 pages[page_index].activate()
@@ -63,7 +63,13 @@ while True:
     # Read encoder position. If it's changed, switch pages.
     position = macropad.encoder
     if position != last_position:
-        page_index = position % len(pages)
+        if position < last_position:
+            # Previous page
+            page_index = (page_index - 1) % len(pages)
+        else:
+            # Next page
+            page_index = (page_index + 1) % len(pages)
+
         pages[page_index].activate()
         last_position = position
 
@@ -106,7 +112,6 @@ while True:
                     if page.name.lower() == item[0]:
                         page_index = idx
                         pages[page_index].activate()
-                        # TODO: fix bug where encoder position isn't right after this change.
 
 
         else:
