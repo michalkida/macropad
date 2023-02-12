@@ -1,27 +1,20 @@
 # Test home page
 from adafruit_hid.consumer_control_code import ConsumerControlCode
+from utils.core import scan_for_page_files
+
+files = scan_for_page_files()
+print(files)
+files.remove("home.py")
+macros = []
+
+for i in range(0,12):
+    if i < len(files):
+        macros.append((0x000020, files[i][:-3], [[files[i][:-3]]]))
+    else:
+        macros.append((0x000040, '-', []))
 
 page = {
     'name' : "Home",
-    'macros' : [
-        # COLOR    LABEL    KEY SEQUENCE
-        # 1st row ----------
-        (0x000020, 'Media', []),
-        (0x000000, '', []),
-        (0x000000, '', []),
-        # 2nd row ----------
-        (0x000000, '', []),
-        (0x000000, '', []),
-        (0x000000, '', []),
-        # 3rd row ----------
-        (0x000000, '', []),
-        (0x000000, '', []),
-        (0x000000, '', []),
-        # 4th row ----------
-        (0x000000, '', []),
-        (0x000000, '', []),
-        (0x000000, '', []),
-        # Encoder button ---
-        (0x000000, '', [])
-    ]
+    'macros': macros,
+
 }

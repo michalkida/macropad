@@ -1,4 +1,4 @@
-from utils.core import setup_oled_group
+from utils.core import setup_oled_group, find_page, scan_for_page_files
 from utils.settings import PAGE_DIR, DEFAULT_PAGE
 import os
 from adafruit_macropad import MacroPad
@@ -36,16 +36,15 @@ macropad.display.show(oled_group)
 
 # Grab and import pages
 pages = []
-files = os.listdir(PAGE_DIR)
+files = scan_for_page_files()
 for file in files:
-    if file.endswith(".py"):
-        try:
-            module = __import__(PAGE_DIR + "/" + file[:-3])
-            pages.append(Page(module.page))
-        except Exception as err:
-            print(f"Error in {file}.")
-            import traceback
-            traceback.print_exception(err, err, err.__traceback__)
+    try:
+        module = __import__(PAGE_DIR + "/" + file[:-3])
+        pages.append(Page(module.page))
+    except Exception as err:
+        print(f"Error in {file}.")
+        import traceback
+        traceback.print_exception(err, err, err.__traceback__)
 
 if not pages:
     oled_group[13].text = "NO PAGES FOUND"
@@ -57,7 +56,6 @@ last_position = None
 last_encoder_switch = macropad.encoder_switch_debounced.pressed
 page_index = 0
 pages[page_index].activate()
-
 
 # MAIN LOOP ----------------------------
 
@@ -100,45 +98,57 @@ while True:
         # String (e.g. "Foo"): corresponding keys pressed & released
         # List []: one or more Consumer Control codes (can also do float delay)
         # Dict {}: mouse buttons/motion (might extend in future)
-        if key_number < 12:  # No pixel for encoder button
-            macropad.pixels[key_number] = 0xFFFFFF
-            macropad.pixels.show()
-        for item in sequence:
-            if isinstance(item, int):
-                if item >= 0:
-                    macropad.keyboard.press(item)
-                else:
-                    macropad.keyboard.release(-item)
-            elif isinstance(item, float):
-                time.sleep(item)
-            elif isinstance(item, str):
-                macropad.keyboard_layout.write(item)
-            elif isinstance(item, list):
-                for code in item:
-                    if isinstance(code, int):
-                        macropad.consumer_control.release()
-                        macropad.consumer_control.press(code)
-                    if isinstance(code, float):
-                        time.sleep(code)
-            elif isinstance(item, dict):
-                if "buttons" in item:
-                    if item["buttons"] >= 0:
-                        macropad.mouse.press(item["buttons"])
+
+        # Home page will only point to other pages. Special handling done here to switch pages.
+        if pages[page_index].name == "Home":
+            for item in sequence:
+                for idx, page in enumerate(pages):
+                    if page.name.lower() == item[0]:
+                        page_index = idx
+                        pages[page_index].activate()
+                        # TODO: fix bug where encoder position isn't right after this change.
+
+
+        else:
+            if key_number < 12:  # No pixel for encoder button
+                macropad.pixels[key_number] = 0xFFFFFF
+                macropad.pixels.show()
+            for item in sequence:
+                if isinstance(item, int):
+                    if item >= 0:
+                        macropad.keyboard.press(item)
                     else:
-                        macropad.mouse.release(-item["buttons"])
-                macropad.mouse.move(
-                    item["x"] if "x" in item else 0,
-                    item["y"] if "y" in item else 0,
-                    item["wheel"] if "wheel" in item else 0,
-                )
-                if "tone" in item:
-                    if item["tone"] > 0:
-                        macropad.stop_tone()
-                        macropad.start_tone(item["tone"])
-                    else:
-                        macropad.stop_tone()
-                elif "play" in item:
-                    macropad.play_file(item["play"])
+                        macropad.keyboard.release(-item)
+                elif isinstance(item, float):
+                    time.sleep(item)
+                elif isinstance(item, str):
+                    macropad.keyboard_layout.write(item)
+                elif isinstance(item, list):
+                    for code in item:
+                        if isinstance(code, int):
+                            macropad.consumer_control.release()
+                            macropad.consumer_control.press(code)
+                        if isinstance(code, float):
+                            time.sleep(code)
+                elif isinstance(item, dict):
+                    if "buttons" in item:
+                        if item["buttons"] >= 0:
+                            macropad.mouse.press(item["buttons"])
+                        else:
+                            macropad.mouse.release(-item["buttons"])
+                    macropad.mouse.move(
+                        item["x"] if "x" in item else 0,
+                        item["y"] if "y" in item else 0,
+                        item["wheel"] if "wheel" in item else 0,
+                    )
+                    if "tone" in item:
+                        if item["tone"] > 0:
+                            macropad.stop_tone()
+                            macropad.start_tone(item["tone"])
+                        else:
+                            macropad.stop_tone()
+                    elif "play" in item:
+                        macropad.play_file(item["play"])
     else:
         # Release any still-pressed keys, consumer codes, mouse buttons
         # Keys and mouse buttons are individually released this way (rather

@@ -1,7 +1,9 @@
 import displayio
 import terminalio
+import os
 from adafruit_display_shapes.rect import Rect
 from adafruit_display_text import label
+from utils.settings import PAGE_DIR
 
 def setup_oled_group(macropad):
     group = displayio.Group()
@@ -32,3 +34,20 @@ def setup_oled_group(macropad):
     )
 
     return group
+
+
+def find_page(pages, target):
+    for page in pages:
+        if page.name == target:
+            return page
+
+    return None
+
+
+def scan_for_page_files():
+    files = os.listdir(PAGE_DIR)
+    for file in files:
+        if not file.endswith(".py"):
+            files.pop(file)
+
+    return files
