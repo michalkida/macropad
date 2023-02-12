@@ -46,8 +46,6 @@ def find_page(pages, target):
 
 def scan_for_page_files():
     files = os.listdir(PAGE_DIR)
-    for file in files:
-        if not file.endswith(".py"):
-            files.pop(file)
+    files = [file for file in files if file.endswith('.py') and not file.startswith('_')]
 
     return files
