@@ -8,17 +8,28 @@ class Page:
     def __init__(self, data):
         self.name = data["name"]
         self.macros = data["macros"]
+        if data.get("custom_func") and callable(data["custom_func"]):
+            self.custom = data["custom_func"]
+        else:
+            self.custom = None
 
     def activate(self):
-        oled_group[13].text = self.name  # Page name
+        if self.custom:
+            macropad.display.refresh()
+            self.custom(macropad, position)
+            macropad.display.refresh()
+            macropad.display.show(oled_group)
 
-        for i in range(12):
-            if i < len(self.macros):  # Key in use, set label + LED color
-                macropad.pixels[i] = self.macros[i][0]
-                oled_group[i].text = self.macros[i][1]
-            else:  # Key not in use, no label or LED
-                macropad.pixels[i] = 0
-                oled_group[i].text = ""
+        else:
+            oled_group[13].text = self.name  # Page name
+
+            for i in range(12):
+                if i < len(self.macros):  # Key in use, set label + LED color
+                    macropad.pixels[i] = self.macros[i][0]
+                    oled_group[i].text = self.macros[i][1]
+                else:  # Key not in use, no label or LED
+                    macropad.pixels[i] = 0
+                    oled_group[i].text = ""
 
         macropad.keyboard.release_all()
         macropad.consumer_control.release()
@@ -81,6 +92,7 @@ while True:
     if encoder_switch != last_encoder_switch:
         last_encoder_switch = encoder_switch
         if len(pages[page_index].macros) < 13:
+            # TODO: go home if not home and no macro set on enc press
             continue  # No 13th macro, just resume main loop
         key_number = 12  # else process below as 13th macro
         pressed = encoder_switch
