@@ -3,6 +3,7 @@ from utils.settings import PAGE_DIR, DEFAULT_PAGE
 import os
 from adafruit_macropad import MacroPad
 
+
 class Page:
 
     def __init__(self, data):
@@ -62,9 +63,12 @@ if not pages:
     while True:
         pass
 
+
 last_position = 0
 last_encoder_switch = macropad.encoder_switch_debounced.pressed
-page_index = 0
+# Always default to home page on startup
+home_idx = find_page(pages,'Home')[1]
+page_index = home_idx
 pages[page_index].activate()
 
 # MAIN LOOP ----------------------------

@@ -37,11 +37,14 @@ def setup_oled_group(macropad):
 
 
 def find_page(pages, target):
+    """
+    Returns page object, index within page list.
+    """
     for page in pages:
         if page.name == target:
-            return page
+            return page, pages.index(page)
 
-    return None
+    return None, None
 
 
 def scan_for_page_files():
