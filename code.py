@@ -95,7 +95,6 @@ while True:
     if encoder_switch != last_encoder_switch:
         last_encoder_switch = encoder_switch
         if len(pages[page_index].macros) < 13:
-            # TODO: go home if not home and no macro set on enc press
             continue  # No 13th macro, just resume main loop
         key_number = 12  # else process below as 13th macro
         pressed = encoder_switch
@@ -127,7 +126,12 @@ while True:
                     if page.name.lower() == item[0]:
                         page_index = idx
                         pages[page_index].activate()
-
+        elif key_number == 12:
+            # If encoder pressed on non home page, and no macro sequence found,
+            # go to home page.
+            if not sequence:
+                page_index = home_idx
+                pages[page_index].activate()
 
         else:
             if key_number < 12:  # No pixel for encoder button
