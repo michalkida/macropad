@@ -15,14 +15,18 @@ getSoftwareHwnd(processExe) {
 ; Send a key to a software.
 sendKeyToSoftware(processExe, key, method) {
 	softwareHwnd := getsoftwareHwnd(processExe)
-	if (method == "PostMessage" ) {
-		PostMessage, 0x319,, 0xE0000,, ahk_id %softwareHwnd%
-	}
-	if (method == "ControlSend" ) {
-		; Chromium ignores keys when it isn't focused.
-		; Focus the document window without bringing the app to the foreground.
-		ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %softwareHwnd%
-		ControlSend, , %key%, ahk_id %softwareHwnd%
+	if  WinExist("A") != softwareHwnd {
+		if (method == "PostMessage" ) {
+			PostMessage, 0x319,, 0xE0000,, ahk_id %softwareHwnd%
+		}
+		if (method == "ControlSend" ) {
+			; Chromium ignores keys when it isn't focused.
+			; Focus the document window without bringing the app to the foreground.
+			ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %softwareHwnd%
+			ControlSend, , %key%, ahk_id %softwareHwnd%
+		}
+	} else {
+		Send %key%
 	}
 	Return
 }
