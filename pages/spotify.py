@@ -21,9 +21,9 @@ page = {
         (0x200000, 'Mute', [[ConsumerControlCode.MUTE]]),
         (0x000020, 'Vol+', [Keycode.F14]),
         # 3rd row ----------
-        (0x000000, '<', [Keycode.CONTROL, Keycode.SHIFT, Keycode.LEFT_ARROW]),
+        (0x000020, '<', [Keycode.F17]),
         (0x000000, 'Seek', []),
-        (0x000000, '>', [Keycode.CONTROL, Keycode.SHIFT, Keycode.RIGHT_ARROW]),
+        (0x000020, '>', [Keycode.F18]),
         # 4th row ----------
         (0x202000, '|<', [[ConsumerControlCode.SCAN_PREVIOUS_TRACK]]),
         (0x002000, 'Play/Pause', [Keycode.F16]),

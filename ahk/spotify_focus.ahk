@@ -51,3 +51,17 @@ F16::
 	sendKeyToSoftware("spotify.exe","{Space}", "ControlSend")
 	Return
 }
+
+;Back 15s
+F17::
+{
+	sendKeyToSoftware("spotify.exe","+^{Left}", "ControlSend")
+	Return
+}
+
+;Forward 15s
+F18::
+{
+	sendKeyToSoftware("spotify.exe","+^{Right}", "ControlSend")
+	Return
+}
