@@ -1,8 +1,9 @@
 PAGE_DIR = "/pages"
 DEFAULT_PAGE = "home.py"
+SCREEN_TIMEOUT_MINUTES = 5
 
 COLOURS = {
-    'RED': 0xFF0000,
+    'RED': 0x330000,
     'BLUE': 0x0000FF,
-    'GREEN': 0x00FF00
+    'GREEN': 0x003300
 }

@@ -1,9 +1,10 @@
 import displayio
 import terminalio
 import os
+import time
 from adafruit_display_shapes.rect import Rect
 from adafruit_display_text import label
-from utils.settings import PAGE_DIR
+from utils.settings import PAGE_DIR, SCREEN_TIMEOUT_MINUTES
 
 def setup_oled_group(macropad):
     group = displayio.Group()
@@ -52,3 +53,29 @@ def scan_for_page_files():
     files = [file for file in files if file.endswith('.py') and not file.startswith('_')]
 
     return files
+
+
+def display_on(macropad):
+    macropad.display.bus.send(int(0xAF), "")
+
+
+def display_off(macropad):
+    macropad.display.bus.send(int(0xAE), "")
+
+
+class screensaver:
+    def __init__(self, duration=60 * SCREEN_TIMEOUT_MINUTES):
+        self.duration = duration
+        self.off_time = time.monotonic() + self.duration
+        self.on = True
+
+    def poll(self):
+        if self.on:
+            now = time.monotonic()
+            if now >= self.off_time:
+                self.on = False
+
+    def reset(self):
+        self.off_time = time.monotonic() + self.duration
+        if not self.on:
+            self.on = True

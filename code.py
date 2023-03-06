@@ -1,4 +1,4 @@
-from utils.core import setup_oled_group, find_page, scan_for_page_files
+from utils.core import setup_oled_group, find_page, scan_for_page_files, display_on, display_off, screensaver
 from utils.settings import PAGE_DIR, DEFAULT_PAGE
 import os
 from adafruit_macropad import MacroPad
@@ -44,6 +44,9 @@ oled_group = setup_oled_group(macropad)
 macropad.display.auto_refresh = False
 macropad.pixels.auto_write = False
 macropad.display.show(oled_group)
+display_on(macropad)
+screensaver = screensaver()
+
 
 # Grab and import pages
 pages = []
@@ -74,9 +77,17 @@ pages[page_index].activate()
 # MAIN LOOP ----------------------------
 
 while True:
+    # Check whether to switch off the display
+    screensaver.poll()
+    if screensaver.on:
+        display_on(macropad)
+    else:
+        display_off(macropad)
     # Read encoder position. If it's changed, switch pages.
     position = macropad.encoder
+    custom_function_flag = False
     if position != last_position:
+        screensaver.reset()
         if position < last_position:
             # Previous page
             page_index = (page_index - 1) % len(pages)
@@ -84,15 +95,22 @@ while True:
             # Next page
             page_index = (page_index + 1) % len(pages)
 
-        pages[page_index].activate()
-        last_position = position
+        if pages[page_index].custom:
+            print(f'{pages[page_index].name} HAS CUSTOM FUNC')
+            custom_function_flag = True
 
+        last_position = position
+        pages[page_index].activate()
+        if custom_function_flag:
+            #TODO: fix weirdness jumping out of custom functions
+            print('did we just jump out of a custom func?')
     # Handle encoder button. If state has changed, and if there's a
     # corresponding macro, set up variables to act on this just like
     # the keypad keys, as if it were a 13th key/macro.
     macropad.encoder_switch_debounced.update()
     encoder_switch = macropad.encoder_switch_debounced.pressed
     if encoder_switch != last_encoder_switch:
+        screensaver.reset()
         last_encoder_switch = encoder_switch
         if len(pages[page_index].macros) < 13:
             continue  # No 13th macro, just resume main loop
@@ -108,7 +126,7 @@ while True:
     # If code reaches here, a key or the encoder button WAS pressed/released
     # and there IS a corresponding macro available for it...other situations
     # are avoided by 'continue' statements above which resume the loop.
-
+    screensaver.reset()
     sequence = pages[page_index].macros[key_number][2]
     if pressed:
         # 'sequence' is an arbitrary-length list, each item is one of:
