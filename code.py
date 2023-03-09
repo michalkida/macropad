@@ -45,6 +45,7 @@ macropad.display.auto_refresh = False
 macropad.pixels.auto_write = False
 macropad.display.show(oled_group)
 display_on(macropad)
+display_powered = True
 screensaver = screensaver()
 
 
@@ -79,10 +80,12 @@ pages[page_index].activate()
 while True:
     # Check whether to switch off the display
     screensaver.poll()
-    if screensaver.on:
+    if screensaver.on and not display_powered:
         display_on(macropad)
-    else:
+        display_powered = True
+    elif not screensaver.on and display_powered:
         display_off(macropad)
+        display_powered = False
     # Read encoder position. If it's changed, switch pages.
     position = macropad.encoder
     custom_function_flag = False
