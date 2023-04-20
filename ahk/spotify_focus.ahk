@@ -7,8 +7,9 @@ DetectHiddenWindows, On
 getSoftwareHwnd(processExe) {
 	WinGet, softwareHwnd, ID, ahk_exe %processExe%
 	; We need the app's third top level window, so get next twice.
-	softwareHwnd := DllCall("GetWindow", "uint", softwareHwnd, "uint", 2)
-	softwareHwnd := DllCall("GetWindow", "uint", softwareHwnd, "uint", 2)
+	; Not needed for newer versions of app!
+	; softwareHwnd := DllCall("GetWindow", "uint", softwareHwnd, "uint", 2)
+	; softwareHwnd := DllCall("GetWindow", "uint", softwareHwnd, "uint", 2)
 	Return softwareHwnd
 }
 
@@ -55,13 +56,13 @@ F16::
 ;Back 15s
 F17::
 {
-	sendKeyToSoftware("spotify.exe","+^{Left}", "ControlSend")
+	sendKeyToSoftware("spotify.exe","+{Left}", "ControlSend")
 	Return
 }
 
 ;Forward 15s
 F18::
 {
-	sendKeyToSoftware("spotify.exe","+^{Right}", "ControlSend")
+	sendKeyToSoftware("spotify.exe","+{Right}", "ControlSend")
 	Return
 }
