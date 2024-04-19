@@ -43,7 +43,7 @@ macropad = MacroPad()
 oled_group = setup_oled_group(macropad)
 macropad.display.auto_refresh = False
 macropad.pixels.auto_write = False
-macropad.display.show(oled_group)
+macropad.display.root_group = oled_group
 display_on(macropad)
 display_powered = True
 screensaver = screensaver()

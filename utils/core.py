@@ -79,3 +79,4 @@ class screensaver:
         self.off_time = time.monotonic() + self.duration
         if not self.on:
             self.on = True
+
