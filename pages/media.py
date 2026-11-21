@@ -15,7 +15,7 @@ page = {
         (0x000020, 'Vol+', [[ConsumerControlCode.VOLUME_INCREMENT]]),
         # 2nd row ----------
         (0x000000, 'Min', [Keycode.F19]),                   # volume 0%
-        (0x000000, 'Lock', [Keycode.WINDOWS, Keycode.L]),
+        (0x000000, 'Lock', [Keycode.WINDOWS, Keycode.ALT, Keycode.L]),  # KDE lock; AHK on Windows
         (0x000000, 'Max', [Keycode.F24]),                   # unmute, volume 100%
         # 3rd row ----------
         (0x000020, 'Seek-', [Keycode.SHIFT, Keycode.F19]),  # Spotify back

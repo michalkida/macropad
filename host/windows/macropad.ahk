@@ -5,6 +5,7 @@
 ;   F24        unmute, volume 100%
 ;   Shift+F19  Spotify seek back
 ;   Shift+F24  Spotify seek forward
+;   Win+Alt+L  lock (KDE's lock shortcut, so one key works on both)
 
 #SingleInstance Force
 DetectHiddenWindows, On
@@ -27,6 +28,8 @@ F24::
     SoundSet, 0, MASTER, MUTE  ; 0 = mute off
     SoundSet, 100
 Return
+
+#!l::DllCall("LockWorkStation")
 
 +F19::sendKeyToSoftware(SPOTIFY, "+{Left}")
 +F24::sendKeyToSoftware(SPOTIFY, "+{Right}")

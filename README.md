@@ -13,6 +13,7 @@ Min/Max volume and Spotify seek send F19/F24 (with Shift for seek), which a smal
 | Max | F24 | unmute, volume 100% |
 | Seek- | Shift+F19 | Spotify seek back |
 | Seek+ | Shift+F24 | Spotify seek forward |
+| Lock | Win+Alt+L | lock screen (matches my KDE lock shortcut; the AHK script locks Windows) |
 
 - **Windows:** run `host/windows/macropad.ahk` with AutoHotkey v1 (put a shortcut to it in `shell:startup`).
 - **Linux (KDE Plasma):** run `host/linux/install-kde.sh` once (`--uninstall` removes it). Needs `wpctl` and `playerctl`.
