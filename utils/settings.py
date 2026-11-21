@@ -5,7 +5,7 @@ ENCODER_SETTLE_MS = 50
 
 # Pages shown, in encoder order, by the 'name' each page file defines.
 # A page file whose name isn't listed here is not shown.
-PAGE_ORDER = ["Home", "Media", "Spotify", "Bongo"]
+PAGE_ORDER = ["Home", "Media", "Bongo"]
 HOME_PAGE = "Home"
 
 COLOURS = {

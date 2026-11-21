@@ -1,0 +1,11 @@
+#!/bin/sh
+# Computer-side actions for the macropad's Media page (PipeWire + MPRIS).
+# Bound to the macropad's keys by install-kde.sh.
+case "$1" in
+    vol-min)      wpctl set-volume @DEFAULT_AUDIO_SINK@ 0 ;;
+    vol-max)      wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
+                  wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0 ;;
+    seek-back)    playerctl --player=spotify position 15- ;;
+    seek-forward) playerctl --player=spotify position 15+ ;;
+    *) echo "usage: $0 vol-min|vol-max|seek-back|seek-forward" >&2; exit 2 ;;
+esac
