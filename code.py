@@ -1,6 +1,7 @@
 from utils.core import setup_oled_group, scan_for_page_files, display_on, display_off, screensaver
-from utils.settings import PAGE_DIR, PAGE_ORDER, HOME_PAGE
+from utils.settings import PAGE_DIR, PAGE_ORDER, HOME_PAGE, ENCODER_SETTLE_MS
 import time
+from adafruit_ticks import ticks_ms, ticks_add, ticks_less
 from adafruit_macropad import MacroPad
 
 
@@ -208,7 +209,13 @@ if not pages:
 home_idx = page_index_of(HOME_PAGE)
 page_index = home_idx if home_idx is not None else 0
 pages[page_index].activate()
+# The encoder's contacts bounce for ~40 ms per click, adding 0-30 spurious
+# counts (sometimes backwards), but the first edge of a click reliably gives
+# its direction. So read raw edges (divisor 1), step one page on the first
+# edge, then ignore the encoder until it has been still for ENCODER_SETTLE_MS.
+macropad._encoder.divisor = 1
 last_position = macropad.encoder
+encoder_settle_until = ticks_ms()
 encoder_switch = macropad.encoder_switch_debounced
 
 # MAIN LOOP ----------------------------
@@ -223,12 +230,15 @@ while True:
         display_off(macropad)
         display_powered = False
 
-    # Encoder turned: move as many pages as it moved detents.
+    # Encoder turned: one page per click, see encoder setup above.
     position = macropad.encoder
     if position != last_position:
-        saver.reset()
-        switch_to((page_index + position - last_position) % len(pages))
+        if not ticks_less(ticks_ms(), encoder_settle_until):  # Still since last click
+            saver.reset()
+            switch_to((page_index + (1 if position > last_position else -1)) % len(pages))
+            position = macropad.encoder  # Absorb bounce that arrived while switching
         last_position = position
+        encoder_settle_until = ticks_add(ticks_ms(), ENCODER_SETTLE_MS)
 
     # Encoder button, handled like a 13th key
     encoder_switch.update()
