@@ -56,11 +56,11 @@ def scan_for_page_files():
 
 
 def display_on(macropad):
-    macropad.display.bus.send(int(0xAF), "")
+    macropad.display.bus.send(0xAF, b"")
 
 
 def display_off(macropad):
-    macropad.display.bus.send(int(0xAE), "")
+    macropad.display.bus.send(0xAE, b"")
 
 
 class screensaver:

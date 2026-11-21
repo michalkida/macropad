@@ -1,0 +1,5 @@
+# Libraries for the macropad. Install/update onto the device with:
+#   circup install -r requirements.txt   (or: circup update)
+adafruit_macropad
+adafruit_display_shapes
+adafruit_imageload

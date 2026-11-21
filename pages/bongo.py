@@ -16,7 +16,7 @@ def Loop(macropad, last_position):
     group = displayio.Group()
     group.append(bongo.group)
 
-    macropad.display.show(group)
+    macropad.display.root_group = group
 
     macropad.pixels.fill((0,0,0))
     macropad.pixels.show()

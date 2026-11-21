@@ -2,3 +2,9 @@
 System Volume Information/IndexerVolumeGuid
 System Volume Information/WPSettings.dat
 boot_out.txt
+.fseventsd/
+.metadata_never_index
+.Trashes
+.Trash-1000
+sd/
+settings.toml

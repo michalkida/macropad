@@ -1,6 +1,6 @@
 from utils.core import setup_oled_group, find_page, scan_for_page_files, display_on, display_off, screensaver
-from utils.settings import PAGE_DIR, DEFAULT_PAGE
-import os
+from utils.settings import PAGE_DIR
+import time
 from adafruit_macropad import MacroPad
 
 
@@ -18,7 +18,7 @@ class Page:
         if self.custom:
             macropad.display.refresh()
             self.custom(macropad, position)
-            macropad.display.show(oled_group)
+            macropad.display.root_group = oled_group
 
         else:
             oled_group[13].text = self.name  # Page name
@@ -46,7 +46,7 @@ macropad.pixels.auto_write = False
 macropad.display.root_group = oled_group
 display_on(macropad)
 display_powered = True
-screensaver = screensaver()
+saver = screensaver()
 
 
 # Grab and import pages
@@ -79,18 +79,18 @@ pages[page_index].activate()
 
 while True:
     # Check whether to switch off the display
-    screensaver.poll()
-    if screensaver.on and not display_powered:
+    saver.poll()
+    if saver.on and not display_powered:
         display_on(macropad)
         display_powered = True
-    elif not screensaver.on and display_powered:
+    elif not saver.on and display_powered:
         display_off(macropad)
         display_powered = False
     # Read encoder position. If it's changed, switch pages.
     position = macropad.encoder
     custom_function_flag = False
     if position != last_position:
-        screensaver.reset()
+        saver.reset()
         if position < last_position:
             # Previous page
             page_index = (page_index - 1) % len(pages)
@@ -113,7 +113,7 @@ while True:
     macropad.encoder_switch_debounced.update()
     encoder_switch = macropad.encoder_switch_debounced.pressed
     if encoder_switch != last_encoder_switch:
-        screensaver.reset()
+        saver.reset()
         last_encoder_switch = encoder_switch
         if len(pages[page_index].macros) < 13:
             continue  # No 13th macro, just resume main loop
@@ -129,7 +129,7 @@ while True:
     # If code reaches here, a key or the encoder button WAS pressed/released
     # and there IS a corresponding macro available for it...other situations
     # are avoided by 'continue' statements above which resume the loop.
-    screensaver.reset()
+    saver.reset()
     sequence = pages[page_index].macros[key_number][2]
     if pressed:
         # 'sequence' is an arbitrary-length list, each item is one of:
