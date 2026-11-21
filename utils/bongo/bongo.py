@@ -66,8 +66,13 @@ class Bongo(object):
         self._group.y = value
 
     # Update method
-    # Should be called in main loop
+    # Should be called in main loop. Returns True if the frame changed.
     def update(self, key_event):
+        frame_before = self._sprite[0]
+        self._animate(key_event)
+        return self._sprite[0] != frame_before
+
+    def _animate(self, key_event):
         now = time.monotonic()
 
         # Tap on key press

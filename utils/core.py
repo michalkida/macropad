@@ -37,17 +37,6 @@ def setup_oled_group(macropad):
     return group
 
 
-def find_page(pages, target):
-    """
-    Returns page object, index within page list.
-    """
-    for page in pages:
-        if page.name == target:
-            return page, pages.index(page)
-
-    return None, None
-
-
 def scan_for_page_files():
     files = os.listdir(PAGE_DIR)
     files = [file for file in files if file.endswith('.py') and not file.startswith('_')]

@@ -1,40 +1,28 @@
 # Meow
-import random
-import time
 import displayio
-import adafruit_imageload
-from adafruit_display_shapes.line import Line
 from utils.bongo.bongo import Bongo
 
+# Built once at startup: loading the sprite sheet takes ~350 ms.
+bongo = Bongo()
+bongo.x = 40
+bongo.y = 15
+group = displayio.Group()
+group.append(bongo.group)
 
-def Loop(macropad, last_position):
-    bongo = Bongo()
 
-    bongo.x = 40
-    bongo.y = 15
-
-    group = displayio.Group()
-    group.append(bongo.group)
-
+def enter(macropad):
     macropad.display.root_group = group
+    macropad.pixels.fill(0)
 
-    macropad.pixels.fill((0,0,0))
-    macropad.pixels.show()
 
-    last_position = last_position
-
-    while True:
-        key_event = macropad.keys.events.get()
-        bongo.update(key_event)
+def update(macropad, key_event):
+    if bongo.update(key_event):
         macropad.display.refresh()
-
-        position = macropad.encoder
-        if position != last_position:
-            return
 
 
 page = {
     'name': 'Bongo',
     'macros': [],
-    'custom_func': Loop
+    'enter': enter,
+    'update': update,
 }

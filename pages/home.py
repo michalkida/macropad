@@ -1,21 +1,16 @@
-# Test home page
-from adafruit_hid.consumer_control_code import ConsumerControlCode
-from utils.core import scan_for_page_files
-from utils.settings import COLOURS
+# Home page: one key per page, in PAGE_ORDER, that jumps to it.
+from utils.settings import COLOURS, HOME_PAGE, PAGE_ORDER
 
-files = scan_for_page_files()
-if "home.py" in files:
-    files.remove("home.py")
+targets = [name for name in PAGE_ORDER if name != HOME_PAGE]
 macros = []
 
-for i in range(0,12):
-    if i < len(files):
-        macros.append((COLOURS['GREEN'], files[i][:-3], [[files[i][:-3]]]))
+for i in range(12):
+    if i < len(targets):
+        macros.append((COLOURS['GREEN'], targets[i], [{"page": targets[i]}]))
     else:
         macros.append((COLOURS['RED'], '-', []))
 
 page = {
-    'name' : "Home",
+    'name': HOME_PAGE,
     'macros': macros,
-
 }
